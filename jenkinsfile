@@ -1,16 +1,17 @@
 pipeline {
     agent any
     stages{
-        stage('Build Maven'){
+        stage('git cloned'){
             steps{
                 git url:'https://github.com/Felix-Jayan/bank-project/', branch: "main"
-               sh 'mvn clean install'
+              
             }
         }
         stage('Build docker image'){
             steps{
                 script{
                     sh 'docker build -t fiya/myfirstproject:v1 .'
+                    sh 'docker images'
                 }
             }
         }
@@ -23,15 +24,12 @@ pipeline {
             }
         }
         
-        
-        stage('Deploy to k8s'){
-            when{ expression {env.GIT_BRANCH == 'main'}}
-            steps{
+     stage('Deploy') {
+            steps {
                 script{
-                     kubernetesDeploy (configs: 'deploymentservice.yaml' ,kubeconfigId: 'k8sconfigpwd')
-                   
+                    sh 'sudo docker run -itd --name My-project-con -p 8089:80 fiya/myfirstproject:v1'
+                       }
+                    }
                 }
-            }
-        }
     }
 }
