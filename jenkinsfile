@@ -24,10 +24,11 @@ pipeline {
             }
         }
         
-     stage('Deploy') {
-            steps {
+     stage('Deploy to k8s'){
+            when{ expression {env.GIT_BRANCH == 'main'}}
+            steps{
                 script{
-                    sh 'sudo docker run -itd --name My-project-con -p 8091:80 fiya/myfirstproject:v1'
+                     kubernetesDeploy (configs: 'deploymentservice.yaml' ,kubeconfigId: 'k8sconfigpwd')
                        }
                     }
                 }
