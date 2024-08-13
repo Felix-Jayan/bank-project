@@ -3,7 +3,7 @@ pipeline {
     stages{
         stage('Build Maven'){
             steps{
-                git url:'https://github.com/Felix-Jayan/bank-project/', branch: "master"
+                git url:'https://github.com/Felix-Jayan/bank-project/', branch: "main"
                sh 'mvn clean install'
             }
         }
