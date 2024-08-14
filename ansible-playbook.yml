@@ -1,27 +1,16 @@
-- name: Configure Docker on EC2 Instances
-  hosts: all
+- name : Configure Docker on EC2 Instances
+  hosts : all
   become: true
-  tasks: 
-    - name: Update apt package index
-      apt:
-        update_cache: yes
+  connection : ssh
+  tasks : 
+  - name: updating apt
+    command : sudo apt-get update
+
+  - name : Install Docker
+    command : sudo apt-get install -y docker.io
+
+  - name : Start Docker Service
+    command : sudo systemctl start docker
     
-    - name: Install Docker
-      apt:
-        name: docker.io
-        state: present
-    
-    - name: Start and enable Docker service
-      service:
-        name: docker
-        state: started
-        enabled: yes
-    
-    - name: Deploy Docker Container
-      docker_container:
-        name: myproject
-        image: fiya/myproject:1
-        state: started
-        ports:
-          - "8084:8086"
-        restart_policy: always
+  - name: Deploy Docker Container
+    command: docker run -itd -p 8084:8086 fiya/myproject:1
