@@ -1,22 +1,20 @@
-- name: Install Docker
-  hosts: all
+- name : Configure Docker on EC2 Instances
+  hosts : all
   become: true
   connection : ssh
-  tasks:
+  tasks : 
+  - name: updating apt
+    command : sudo apt-get update
 
-    - name: Add Docker repository
-      apt_repository:
-        repo: deb [docker.com/repo]
-        state: present
+  - name : Install Docker
+    command : sudo apt-get install -y docker.io
+    become : yes
+    become_user : root
 
-    - name: Install Docker
-      apt:
-        name: docker-ce
-        state: present
-        update_cache: yes
+  - name : Start Docker Service
+    command : sudo systemctl start docker
+    become : yes
+    become_user : root
 
-    - name: Start Docker service
-      service:
-        name: docker
-        state: started
-        enabled: yes
+  - name: Deploy Docker Container
+    command: docker run -itd -p 8084:8081 fiya/myproject:1
